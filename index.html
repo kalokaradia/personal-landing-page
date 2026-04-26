@@ -7,6 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="theme-color" content="#020617" />
 
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const prefersDark =
+            window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ?? false;
+          const shouldBeDark = stored ? stored === "dark" : prefersDark;
+          if (shouldBeDark) document.documentElement.classList.add("dark");
+        } catch {}
+      })();
+    </script>
+
     <!-- Primary SEO -->
     <title>Kaloka Radia Nanda | Fullstack Developer</title>
 
@@ -60,8 +72,6 @@
     <link rel="icon" href="/favicon.ico" />
     <link rel="shortcut icon" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <title>Personal Landing Page</title>
   </head>
   <body>
     <div id="root"></div>

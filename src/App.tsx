@@ -1,155 +1,128 @@
-import { ArrowUpRight, Github, Moon, SunDim } from "lucide-react";
 import { useEffect, useState } from "react";
+import ArrowUpRight from "./components/ArrowUpRight";
+import CtaPrimary from "./components/CtaPrimary";
+import CtaSecondary from "./components/CtaSecondary";
+import Dot from "./components/Dot";
+import GithubIcon from "./components/GithubIcon";
+import NavLink from "./components/NavLink";
+import ThemeToggle from "./components/ThemeToggle";
 
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const GITHUB_URL = "https://github.com/kalokaradia";
 const INSTAGRAM_URL = "https://instagram.com/kalokaradia";
 const LINKEDIN_URL =
 	"https://www.linkedin.com/in/kaloka-radia-nanda-b3ab73366/";
 
+// ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
+
 export default function Home() {
-	// dark mode
 	const [isDark, setIsDark] = useState(false);
 
-	const darkThemeToggle = () => {
-		const html = document.documentElement;
-		html.classList.toggle("dark");
-
-		if (html.classList.contains("dark")) {
-			localStorage.setItem("theme", "dark");
-			setIsDark(true);
-		} else {
-			localStorage.setItem("theme", "light");
-			setIsDark(false);
-		}
-	};
-
 	useEffect(() => {
-		const theme = localStorage.getItem("theme");
-		if (theme === "dark") {
-			setIsDark(true);
-			document.documentElement.classList.add("dark");
-		}
+		const stored = localStorage.getItem("theme");
+		const prefersDark = window.matchMedia(
+			"(prefers-color-scheme: dark)",
+		).matches;
+		const shouldBeDark = stored === "dark" || (!stored && prefersDark);
+
+		document.documentElement.classList.toggle("dark", shouldBeDark);
+		setIsDark(shouldBeDark);
 	}, []);
 
+	const toggleTheme = () => {
+		setIsDark((prev) => {
+			const next = !prev;
+			document.documentElement.classList.toggle("dark", next);
+			localStorage.setItem("theme", next ? "dark" : "light");
+			return next;
+		});
+	};
+
 	return (
-		<div className="relative min-h-screen overflow-hidden bg-[#FAF6EE] text-zinc-800 dark:bg-[#0F0F12] dark:text-zinc-200 transition-color duration-300 ease-in-out">
-			{/* subtle grid background */}
-			<div
-				className="pointer-events-none absolute inset-0 opacity-[0.04] transition-opacity duration-300 ease-in-out dark:opacity-[0.06]"
-				style={{
-					backgroundImage:
-						"linear-gradient(to right, rgba(0,0,0,0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.4) 1px, transparent 1px)",
-					backgroundSize: "40px 40px",
-				}}
-			/>
+		<div className="relative z-10 mx-auto flex min-h-screen max-w-[640px] flex-col px-7 py-12">
+			{/* ── HEADER ── */}
+			<header className="flex items-center justify-between mb-20 animate-fade-up-0">
+				<span className="font-sans text-2xs font-bold uppercase tracking-[0.1em] text-primary-300">
+					KRN
+				</span>
+				<nav className="flex items-center gap-6">
+					<NavLink href={INSTAGRAM_URL}>Instagram</NavLink>
+					<NavLink href={LINKEDIN_URL}>LinkedIn</NavLink>
+					<ThemeToggle onToggle={toggleTheme} isDark={isDark} />
+				</nav>
+			</header>
 
-			{/* soft gradient glow */}
-			<div className="pointer-events-none absolute -left-32 top-24 h-72 w-72 rounded-full bg-rose-300/40 transition-color duration-300 ease-in-out dark:bg-rose-500/10 blur-3xl z-0" />
-			<div className="pointer-events-none absolute right-0 bottom-0 h-96 w-96 rounded-full bg-sky-300/20 transition-color duration-300 ease-in-out  dark:bg-sky-500/10 blur-3xl z-0" />
-			<div className="pointer-events-none absolute left-1/2 top-32 h-40 w-40 -translate-x-1/2 rounded-full bg-violet-300/30 transition-color duration-300 ease-in-out  dark:bg-violet-500/10 blur-2xl z-0" />
+			{/* ── HERO ── */}
+			<main className="flex-1 animate-fade-up-1">
+				{/* Status pill */}
+				<div className="inline-flex items-center gap-2 text-2xs font-semibold uppercase tracking-widest text-primary-300 border border-border-100 rounded-full px-3 py-1 mb-8">
+					<span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4caf50] animate-status-pulse" />
+					Student · Programmer
+				</div>
 
-			<div className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col px-6 py-10 sm:max-w-2xl">
-				{/* header */}
-				<header className="flex md:flex-row flex-col items-center justify-between text-sm">
-					<span className="font-medium text-lg mb-2 text-zinc-900 transition-color duration-300 ease-in-out dark:text-zinc-100">
-						Kaloka Radia Nanda
-					</span>
-
-					<div className="flex gap-4">
-						<a
-							href={INSTAGRAM_URL}
-							target="_blank"
-							rel="noreferrer"
-							className="group flex items-center gap-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-color duration-300 ease-in-out"
-						>
-							Instagram
-							<ArrowUpRight className="h-4 w-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-						</a>
-
-						<a
-							href={LINKEDIN_URL}
-							target="_blank"
-							rel="noreferrer"
-							className="group flex items-center gap-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-color duration-300 ease-in-out"
-						>
-							LinkedIn
-							<ArrowUpRight className="h-4 w-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-						</a>
-
-						<button
-							type="button"
-							onClick={darkThemeToggle}
-							className={`
-    relative inline-flex h-9 w-[68px] items-center rounded-full px-1.5
-    backdrop-blur-md border border-zinc-300 dark:border-zinc-200/40 dark:border-zinc-700/40
-    bg-zinc-100 dark:bg-zinc-800/40
-    transition-all duration-300 ease-in-out delay-75
-  `}
-						>
-							<span
-								className={`
-      absolute flex h-7 w-7 items-center justify-center rounded-full
-      transition-all duration-300 ease-in-out delay-75
-      ${
-				isDark
-					? "translate-x-[32px] bg-zinc-900 text-blue-400"
-					: "translate-x-0 bg-zinc-100 text-amber-400"
-			}
-      shadow-sm
-    `}
-							>
-								{isDark ? <Moon size={14} /> : <SunDim size={14} />}
-							</span>
-						</button>
+				{/* Avatar + name */}
+				<div className="flex items-center gap-4 mb-8">
+					<div className="w-14 h-14 rounded-full flex items-center justify-center font-serif text-2xl italic select-none bg-bg-200 border border-border-200 text-accent">
+						K
 					</div>
-				</header>
+					<div className="flex flex-col">
+						<span className="text-base font-medium tracking-tight text-primary-100">
+							Kaloka Radia Nanda
+						</span>
+						<span className="text-xs tracking-wider text-primary-300">
+							Purworejo, Indonesia
+						</span>
+					</div>
+				</div>
 
-				{/* main hero */}
-				<main className="flex flex-1 items-center">
-					<section className="max-w-xl">
-						<p className="text-xs uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400 transition-color duration-300 ease-in-out">
-							Student • Programmer
-						</p>
+				{/* Headline */}
+				<h1 className="font-serif font-normal leading-[1.1] tracking-tight text-primary-100 mb-8 text-[clamp(2.5rem,7vw,3.5rem)]">
+					Building software,
+					<br />
+					tools, and <em className="text-accent not-italic">experiments</em>
+					<br />
+					on the web.
+				</h1>
 
-						<h1 className="mt-5 text-3xl font-semibold leading-tight text-zinc-900 transition-color duration-300 ease-in-out dark:text-zinc-100 sm:text-5xl">
-							I build small software, tools, and experiments on the web.
-						</h1>
+				{/* Separator */}
+				<div className="h-px w-full bg-border-100 mb-8" aria-hidden="true" />
 
-						<p className="mt-5 text-base leading-7 text-zinc-600 transition-color duration-300 ease-in-out dark:text-zinc-300">
-							I'm Kaloka, a student focused on learning software engineering. I
-							enjoy logic, mathematics, and building things that actually run —
-							from small web apps to developer tools and coding experiments.
-							Most of what I build are learning projects, but each one helps me
-							understand how real software systems are designed and built.
-						</p>
+				{/* Body */}
+				<p className="text-[15px] font-light leading-relaxed text-primary-200 mb-10 max-w-[520px]">
+					A student focused on{" "}
+					<strong className="font-medium text-primary-100">
+						software engineering
+					</strong>{" "}
+					— I enjoy logic, mathematics, and building things that actually run.
+					From tools to experiments, each project helps me understand how{" "}
+					<strong className="font-medium text-primary-100">
+						real systems are designed.
+					</strong>
+				</p>
 
-						<div className="mt-6 flex items-left flex-col *:w-fit md:flex-row md:items-center gap-4">
-							<a
-								href={GITHUB_URL}
-								target="_blank"
-								rel="noreferrer"
-								className="group inline-flex items-center gap-2 rounded-full 
-								bg-zinc-900 text-[#FAF6EE] hover:bg-zinc-800 
-								dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 
-								px-5 py-2 text-sm font-medium transition-color ease-in-out duration-300"
-							>
-								<Github className="h-4 w-4" />
-								View my projects
-								<ArrowUpRight className="h-4 w-4 transition-transform ease-in-out duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-							</a>
+				{/* CTAs */}
+				<div className="flex flex-wrap items-center gap-5 animate-fade-up-2">
+					<CtaPrimary href={GITHUB_URL}>
+						<GithubIcon />
+						View projects
+						<ArrowUpRight />
+					</CtaPrimary>
+					<Dot />
+					<CtaSecondary href={INSTAGRAM_URL}>Instagram</CtaSecondary>
+					<Dot />
+					<CtaSecondary href={LINKEDIN_URL}>LinkedIn</CtaSecondary>
+				</div>
+			</main>
 
-							<span className="text-xs ml-1 md:ml-0 text-zinc-500 transition-color duration-300 ease-in-out dark:text-zinc-400">
-								Experiments, tools, and learning projects.
-							</span>
-						</div>
-					</section>
-				</main>
-
-				{/* footer */}
-				<footer className="text-xs text-zinc-500 transition-color duration-300 ease-in-out dark:text-zinc-400">
+			{/* ── FOOTER ── */}
+			<footer className="mt-24 flex flex-wrap items-center justify-between gap-4 animate-fade-up-2">
+				<span className="text-xs tracking-wider text-primary-300">
 					© {new Date().getFullYear()} Kaloka Radia Nanda
-				</footer>
-			</div>
+				</span>
+				<span className="text-[10px] uppercase tracking-widest text-primary-300 px-2.5 py-1 rounded-sm border border-border-100">
+					Open to opportunities
+				</span>
+			</footer>
 		</div>
 	);
 }
